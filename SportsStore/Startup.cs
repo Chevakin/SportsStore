@@ -67,6 +67,10 @@ namespace SportsStore
             app.UseEndpoints(endpoints =>
             {
                 endpoints.MapControllerRoute(
+                   name: null,
+                   pattern: "{area:exists}/{controller=Admin}/{action=Index}");
+
+                endpoints.MapControllerRoute(
                     name: null,
                     pattern: "{category}/Page{productPage:int}",
                     defaults: new { controller = "Product", action = "List" });
@@ -95,9 +99,6 @@ namespace SportsStore
                     name: null,
                     pattern: "{controller}/{action}/{id?}" 
                     );
-                endpoints.MapControllerRoute(
-                    name: null,
-                    pattern: "{areas:exists}/{controller=Home}/{action=Index}");
 
                 //endpoints.MapGet("/", async context =>
                 //{

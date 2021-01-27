@@ -8,6 +8,7 @@ using System.Threading.Tasks;
 
 namespace SportsStore.Controllers
 {
+    [Area("Admin")]
     [Authorize]
     public class AdminController : Controller
     {
