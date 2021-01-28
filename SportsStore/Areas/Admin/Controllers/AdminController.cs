@@ -8,8 +8,8 @@ using System.Threading.Tasks;
 
 namespace SportsStore.Controllers
 {
-    [Area("Admin")]
     [Authorize]
+    [Area("Admin")]
     public class AdminController : Controller
     {
         private readonly IProductRepository _repository;
@@ -20,7 +20,7 @@ namespace SportsStore.Controllers
         }
 
 
-        public IActionResult Index()
+        public IActionResult Index() 
         {
             return View(_repository.Products);
         }
