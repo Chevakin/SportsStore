@@ -13,11 +13,14 @@ namespace SportsStore.Areas.Admin.Controllers
     public class RoleController : Controller
     {
         private readonly RoleManager<IdentityRole> _roleManager;
+        private readonly SignInManager<IdentityUser> _signInManager;
+        private readonly UserManager<IdentityUser> _userManager;
 
 
-        public RoleController(RoleManager<IdentityRole> roleManager)
+        public RoleController(RoleManager<IdentityRole> roleManager, UserManager<IdentityUser> userManager)
         {
             _roleManager = roleManager;
+            _userManager = userManager;
         }
 
 
@@ -37,11 +40,21 @@ namespace SportsStore.Areas.Admin.Controllers
         [HttpPost]
         public async Task<RedirectToActionResult> Delete(string roleName)
         {
+            if (roleName == "admins")
+            {
+                return RedirectToActionWithMessage("Нельзя удалить роль админа", nameof(List));
+            }
+
             var role = await _roleManager.FindByNameAsync(roleName);
 
             if (role is null)
             {
                 return RedirectToActionWithMessage("Ошибка! роль с таким именем не найдена", nameof(List));
+            }
+
+            foreach (var user in await _userManager.GetUsersInRoleAsync(roleName))
+            {
+                await _userManager.RemoveFromRoleAsync(user, roleName);
             }
 
             var result = await _roleManager.DeleteAsync(role);
