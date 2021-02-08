@@ -9,8 +9,8 @@ using System.Threading.Tasks;
 
 namespace SportsStore.Areas.Admin.Controllers
 {
-    [Authorize]
     [Area("Admin")]
+    [Authorize(Roles = "admins")]
     public class AdminController : Controller
     {
         private readonly IProductRepository _repository;
