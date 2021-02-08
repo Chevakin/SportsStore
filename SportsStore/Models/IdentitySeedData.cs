@@ -28,10 +28,10 @@ namespace SportsStore.Models
                 user = new IdentityUser(adminUser);
                 await userManager.CreateAsync(user, adminPassword);
 
-                var role = await roleManager.CreateAsync(new IdentityRole("admins"));
+                await roleManager.CreateAsync(new IdentityRole("admins"));
 
                 user = await userManager.FindByNameAsync(adminUser);
-                var a = await userManager.AddToRoleAsync(user, "admins");
+                await userManager.AddToRoleAsync(user, "admins");
             }
 
         }
