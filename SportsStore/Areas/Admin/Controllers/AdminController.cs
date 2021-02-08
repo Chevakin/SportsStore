@@ -1,12 +1,13 @@
 ﻿using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
+using SportsStore.Areas.Admin.Controllers;
 using SportsStore.Models;
 using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 
-namespace SportsStore.Controllers
+namespace SportsStore.Areas.Admin.Controllers
 {
     [Authorize]
     [Area("Admin")]
