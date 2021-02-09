@@ -1,4 +1,4 @@
-﻿@model IEnumerable<string>
+﻿@model Dictionary<string, IEnumerable<string>>
 
 @{
     ViewData["Title"] = "Roles";
@@ -6,14 +6,14 @@
 
 <table class="table table-striped table-bordered table-sm">
     <tr>
-        <th>Name</th>
+        <th>Role name</th>
+        <th>User Names</th>
     </tr>
-    @foreach (var role in Model)
+    @foreach (var role in Model.Keys)
     {
         <tr>
-            <td>@role</td>
-            <td class="text-center">
-                <form asp-action="Delete" method="post">
+            <td>@role
+                <form class="text-center" asp-action="DeleteRole" method="post">
                     <a asp-action="Edit" class="btn btn-sm btn-warning">
                         Edit
                     </a>
@@ -23,6 +23,22 @@
                     </button>
                 </form>
             </td>
+
+            @foreach (var user in Model[role])
+            {
+                <td>@user
+                    <form class="text-center" asp-action="DeleteUserFromRole" method="post">
+                        <a asp-action="Edit" class="btn btn-sm btn-warning">
+                            Edit
+                        </a>
+                        <input type="hidden" name="roleName" value="@role" />
+                        <input type="hidden" name="userName" value="@user" />
+                        <button type="submit" class="btn btn-danger btn-sm">
+                            Delete
+                        </button>
+                    </form>
+                </td>
+            }
         </tr>
     }
 </table>

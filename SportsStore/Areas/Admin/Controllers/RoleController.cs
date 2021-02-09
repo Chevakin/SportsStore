@@ -13,7 +13,6 @@ namespace SportsStore.Areas.Admin.Controllers
     public class RoleController : Controller
     {
         private readonly RoleManager<IdentityRole> _roleManager;
-        private readonly SignInManager<IdentityUser> _signInManager;
         private readonly UserManager<IdentityUser> _userManager;
 
 
@@ -24,21 +23,31 @@ namespace SportsStore.Areas.Admin.Controllers
         }
 
 
-        public IActionResult List()
+        public async Task<IActionResult> List()
         {
-            var roles = _roleManager.Roles.AsEnumerable();
-            var rolesName = new List<string>();
+            var roles = _roleManager.Roles.ToList();
+            IEnumerable<IdentityUser> users;
+            var userNames = new List<string>();
+            var result = new Dictionary<string, IEnumerable<string>>();
 
             foreach(var role in roles)
             {
-                rolesName.Add(role.Name);
+                users = await _userManager.GetUsersInRoleAsync(role.Name);
+
+                foreach (var user in users)
+                {
+                    userNames.Add(user.UserName);
+                }
+
+                result.Add(role.Name, new List<string>(userNames));
+                userNames.Clear();
             }
 
-            return View(rolesName.AsEnumerable());
+            return View(result);
         }
 
         [HttpPost]
-        public async Task<RedirectToActionResult> Delete(string roleName)
+        public async Task<RedirectToActionResult> DeleteRole(string roleName)
         {
             if (roleName == "admins")
             {
@@ -62,6 +71,35 @@ namespace SportsStore.Areas.Admin.Controllers
             if (result.Succeeded)
             {
                 return RedirectToActionWithMessage($"Роль {roleName} Удалена", nameof(List));
+            }
+            else
+            {
+                return RedirectToActionWithMessage(result.Errors.ToString(), nameof(List));
+            }
+        }
+
+        [HttpPost]
+        public async Task<RedirectToActionResult> DeleteUserFromRole(string userName, string roleName)
+        {
+            IdentityUser user = await _userManager.FindByNameAsync(userName);
+             
+            if (user is null)
+            {
+                return RedirectToActionWithMessage($"Пользователь {userName} не найден", nameof(List));
+            }
+
+            IdentityRole role = await _roleManager.FindByNameAsync(roleName);
+
+            if (role is null)
+            {
+                return RedirectToActionWithMessage($"Роль {roleName} не найдена", nameof(List));
+            }
+
+            var result = await _userManager.RemoveFromRoleAsync(user, role.Name);
+
+            if (result.Succeeded)
+            {
+                return RedirectToActionWithMessage($"Пользователь {userName} удален из роли {roleName}", nameof(List));
             }
             else
             {
